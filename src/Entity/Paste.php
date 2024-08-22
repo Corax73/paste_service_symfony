@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PasteRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PasteRepository::class)]
@@ -24,6 +25,9 @@ class Paste
 
     #[ORM\Column(length: 20)]
     private ?string $access = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $text = null;
 
     public function getId(): ?int
     {
@@ -74,6 +78,18 @@ class Paste
     public function setAccess(string $access): static
     {
         $this->access = $access;
+
+        return $this;
+    }
+
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text): static
+    {
+        $this->text = $text;
 
         return $this;
     }
