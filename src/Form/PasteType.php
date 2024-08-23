@@ -15,10 +15,20 @@ class PasteType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('expiration_time')
-            ->add('access', ChoiceType::class, ['choices' => ['public', 'unlisted', 'private']])
+            ->add('expiration_time', ChoiceType::class, ['choices' => [
+                '10 min' => '10 min',
+                '1 hour' => '1 hour',
+                '3 hours' => '3 hours',
+                '1 day' => '1 day',
+                '1 week' => '1 week',
+                '1 month' => '1 month',
+                'unlimited' => 'unlimited'
+            ]])
+            ->add('access', ChoiceType::class, ['choices' => ['public' => 'public', 'unlisted' => 'unlisted', 'private' => 'private']])
             ->add('text')
-            ->add('save', SubmitType::class)
+            ->setAction($options['action'])
+            ->setMethod('POST')
+            ->add('save', SubmitType::class, ['label' => 'Save paste'])
         ;
     }
 

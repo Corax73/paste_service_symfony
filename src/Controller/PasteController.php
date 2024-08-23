@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Paste;
 use App\Form\PasteType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,26 +16,22 @@ class PasteController extends AbstractController
     public function index(): Response
     {
         $paste = new Paste();
-        $form = $this->createForm(PasteType::class, $paste);
+        $form = $this->createForm(PasteType::class, $paste, ['action' => $this->generateUrl('app_create_paste')]);
         return $this->render('paste/index.html.twig', [
             'form' => $form,
         ]);
     }
 
-    #[Route('/', name: 'app_create_paste')]
-    public function create(Request $request): Response
+    #[Route('/paste/', name: 'app_create_paste', methods: ['POST'])]
+    public function create(EntityManagerInterface $entityManager, Request $request): Response
     {
         $paste = new Paste();
         $form = $this->createForm(PasteType::class, $paste);
-
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
             $paste = $form->getData();
-            dump($paste);
-            // ... perform some action, such as saving the task to the database
-
+            $entityManager->persist($paste);
+            $entityManager->flush();
             return $this->redirectToRoute('app_paste');
         }
 
