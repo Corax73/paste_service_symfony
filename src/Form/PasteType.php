@@ -15,6 +15,7 @@ class PasteType extends AbstractType
     {
         $builder
             ->add('title')
+            ->add('lang', ChoiceType::class, ['choices' => ['php' => 'php', 'javascript' => 'javascript', 'go' => 'go']])
             ->add('expiration_time', ChoiceType::class, ['choices' => [
                 '10 min' => '10 min',
                 '1 hour' => '1 hour',

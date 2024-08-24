@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Paste;
 use App\Form\PasteType;
+use App\Repository\PasteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,12 +14,15 @@ use Symfony\Component\Routing\Attribute\Route;
 class PasteController extends AbstractController
 {
     #[Route('/', name: 'app_paste')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
+        $rep = $entityManager->getRepository(Paste::class);
+        $list = $rep->pagination(0, 12);
         $paste = new Paste();
         $form = $this->createForm(PasteType::class, $paste, ['action' => $this->generateUrl('app_create_paste')]);
         return $this->render('paste/index.html.twig', [
             'form' => $form,
+            'list' => $list
         ]);
     }
 
