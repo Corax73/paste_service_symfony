@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Paste;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+
 /**
  * @extends ServiceEntityRepository<Paste>
  */
@@ -18,15 +19,21 @@ class PasteRepository extends ServiceEntityRepository
     /**
      * @return Paste[] Returns an array of Paste objects
      */
-    public function pagination(int $offset, int $limit = 10): array
+    public function pagination(int $offset, int $limit = 10, bool $is_auth = false): array
     {
-        return collect($this->createQueryBuilder('p')
+        if ($is_auth) {
+            $value = 'private';
+        } else {
+            $value = 'public';
+        }
+        $q = $this->createQueryBuilder('p')
+            ->andWhere('p.access = :val')
+            ->setParameter('val', $value)
             ->orderBy('p.id', 'DESC')
             ->setMaxResults($limit)
-            ->setFirstResult($offset)
-            ->getQuery()
-            ->getResult())->map(fn($item) => ['title' => $item->getTitle()])->toArray()
-        ;
+            ->setFirstResult($offset);
+
+        return collect($q->getQuery()->getResult())->map(fn($item) => ['title' => $item->getTitle()])->toArray();
     }
 
     //    /**

@@ -19,15 +19,27 @@
 	{% block form %}
 		<div class="example-wrapper">
 			{{ form(form) }}
-		</div>
-	{% endblock %}
-	{% block list %}
-		{% if list|length > 0 %}
-			<div class="example-wrapper">
-				{% for item in list %}
-					{{ item.title }},
-				{% endfor %}
 			</div>
+		{% endblock %}
+		{% block list %}
+			{% if list|length > 0 %}
+				<div class="example-wrapper">
+					{% for item in list %}
+						{{ item.title }},
+					{% endfor %}
+				</div>
+			{% endif %}
+		{% endblock %}
+		{% if login != true %}
+			{% block link %}
+				<a href="{{ path('app_login') }}">Login</a>
+			{% endblock %}
+			{% block registration %}
+				<a href="{{ path('app_register') }}">Registration</a>
+			{% endblock %}
+		{% else %}
+			{% block logout %}
+				<a href="{{ path('app_logout') }}">Logout</a>
+			{% endblock %}
 		{% endif %}
 	{% endblock %}
-{% endblock %}

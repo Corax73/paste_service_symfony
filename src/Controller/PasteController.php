@@ -16,13 +16,21 @@ class PasteController extends AbstractController
     #[Route('/', name: 'app_paste')]
     public function index(EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
+
         $rep = $entityManager->getRepository(Paste::class);
-        $list = $rep->pagination(0, 12);
+        if ($user) {
+            $list = $rep->pagination(0, 12, true);
+        } else {
+            $list = $rep->pagination(0, 12);
+        }
         $paste = new Paste();
         $form = $this->createForm(PasteType::class, $paste, ['action' => $this->generateUrl('app_create_paste')]);
+
         return $this->render('paste/index.html.twig', [
             'form' => $form,
-            'list' => $list
+            'list' => $list,
+            'login' => $user ? true : false
         ]);
     }
 
