@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PasteRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Paste
 {
     #[ORM\Id]
@@ -16,9 +17,6 @@ class Paste
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $user_id = null;
 
     #[ORM\Column(length: 50)]
     private ?string $expiration_time = null;
@@ -31,6 +29,12 @@ class Paste
 
     #[ORM\Column(length: 20)]
     private ?string $lang = null;
+
+    #[ORM\ManyToOne(inversedBy: 'pastes')]
+    private ?User $user = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $created_at = null;
 
     public function getId(): ?int
     {
@@ -49,14 +53,14 @@ class Paste
         return $this;
     }
 
-    public function getUserId(): ?int
+    public function getUser(): ?int
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(?int $user_id): static
+    public function setUser(?User $user): static
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }
@@ -107,5 +111,16 @@ class Paste
         $this->lang = $lang;
 
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    #[ORM\PrePersist]
+    public function setCreatedAt()
+    {
+        $this->created_at = new \DateTime("now");
     }
 }

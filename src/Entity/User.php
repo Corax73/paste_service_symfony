@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -32,6 +34,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, Paste>
+     */
+    #[ORM\OneToMany(targetEntity: Paste::class, mappedBy: 'user_id')]
+    private Collection $pastes;
+
+    public function __construct()
+    {
+        $this->pastes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,5 +119,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Paste>
+     */
+    public function getPastes(): Collection
+    {
+        return $this->pastes;
+    }
+
+    public function addPaste(Paste $paste): static
+    {
+        if (!$this->pastes->contains($paste)) {
+            $this->pastes->add($paste);
+            $paste->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removePaste(Paste $paste): static
+    {
+        if ($this->pastes->removeElement($paste)) {
+            // set the owning side to null (unless already changed)
+            if ($paste->getUserId() === $this) {
+                $paste->setUserId(null);
+            }
+        }
+
+        return $this;
     }
 }

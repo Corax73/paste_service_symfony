@@ -24,7 +24,18 @@
 		{% block list %}
 			{% if list|length > 0 %}
 				<div class="example-wrapper">
+					<p>Public pastes</p>
 					{% for item in list %}
+						{{ item.title }},
+					{% endfor %}
+				</div>
+			{% endif %}
+		{% endblock %}
+		{% block list_private %}
+			{% if list_private|length > 0 %}
+				<div class="example-wrapper">
+					<p>Private pastes</p>
+					{% for item in list_private %}
 						{{ item.title }},
 					{% endfor %}
 				</div>

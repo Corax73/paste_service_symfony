@@ -19,19 +19,20 @@ class PasteController extends AbstractController
         $user = $this->getUser();
 
         $rep = $entityManager->getRepository(Paste::class);
+        $list = $rep->pagination(0, 10);
         if ($user) {
-            $list = $rep->pagination(0, 12, true);
-        } else {
-            $list = $rep->pagination(0, 12);
+            $listPrivate = $rep->paginationPrivate(0, 10, $user);
         }
         $paste = new Paste();
         $form = $this->createForm(PasteType::class, $paste, ['action' => $this->generateUrl('app_create_paste')]);
 
-        return $this->render('paste/index.html.twig', [
+        $viewData = [
             'form' => $form,
             'list' => $list,
-            'login' => $user ? true : false
-        ]);
+            'login' => $user ? true : false,
+            'list_private' => $listPrivate ?? false
+        ];
+        return $this->render('paste/index.html.twig', $viewData);
     }
 
     #[Route('/paste/', name: 'app_create_paste', methods: ['POST'])]
@@ -42,6 +43,10 @@ class PasteController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $paste = $form->getData();
+            $user = $this->getUser();
+            if ($user) {
+                $paste->setUser($user);
+            }
             $entityManager->persist($paste);
             $entityManager->flush();
             return $this->redirectToRoute('app_paste');
