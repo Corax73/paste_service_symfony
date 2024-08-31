@@ -17,13 +17,13 @@ class PasteType extends AbstractType
             ->add('title')
             ->add('lang', ChoiceType::class, ['choices' => ['php' => 'php', 'javascript' => 'javascript', 'go' => 'go']])
             ->add('expiration_time', ChoiceType::class, ['choices' => [
-                '10 min' => '10 min',
-                '1 hour' => '1 hour',
-                '3 hours' => '3 hours',
-                '1 day' => '1 day',
-                '1 week' => '1 week',
-                '1 month' => '1 month',
-                'unlimited' => 'unlimited'
+                '10 min' => 10,
+                '1 hour' => 60,
+                '3 hours' => 180,
+                '1 day' => 24 * 60,
+                '1 week' => 24 * 60 * 7,
+                '1 month' => 24 * 60 * 30,
+                'unlimited' => 0
             ]])
             ->add('access', ChoiceType::class, ['choices' => ['public' => 'public', 'unlisted' => 'unlisted', 'private' => 'private']])
             ->add('text')

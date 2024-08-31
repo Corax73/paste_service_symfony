@@ -19,7 +19,7 @@ class Paste
     private ?string $title = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $expiration_time = null;
+    private ?int $expiration_time = null;
 
     #[ORM\Column(length: 20)]
     private ?string $access = null;

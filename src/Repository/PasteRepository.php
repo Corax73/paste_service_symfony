@@ -24,6 +24,8 @@ class PasteRepository extends ServiceEntityRepository
     {
         $value = 'public';
         $q = $this->createQueryBuilder('p')
+            ->orWhere("p.created_at >= DATE_SUB(CURRENT_DATE(), p.expiration_time, 'MINUTE')")
+            ->orWhere('p.expiration_time = 0')
             ->andWhere('p.access = :val')
             ->setParameter('val', $value)
             ->orderBy('p.id', 'DESC')
@@ -40,6 +42,8 @@ class PasteRepository extends ServiceEntityRepository
     {
         $value = 'private';
         $q = $this->createQueryBuilder('p')
+            ->orWhere("p.created_at >= DATE_SUB(CURRENT_DATE(), p.expiration_time, 'MINUTE')")
+            ->orWhere('p.expiration_time = 0')
             ->andWhere('p.access = :val')
             ->setParameter('val', $value)
             ->andWhere('p.user = :user')
