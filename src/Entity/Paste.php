@@ -36,6 +36,9 @@ class Paste
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $created_at = null;
 
+    #[ORM\Column(length: 100)]
+    private ?string $slug = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -122,5 +125,18 @@ class Paste
     public function setCreatedAt()
     {
         $this->created_at = new \DateTime("now");
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    #[ORM\PrePersist]
+    public function setSlug(): static
+    {
+        $this->slug = str_replace('/', '', password_hash($this->title . $this->lang, PASSWORD_DEFAULT));
+
+        return $this;
     }
 }

@@ -32,7 +32,7 @@ class PasteRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
-        return collect($q->getQuery()->getResult())->map(fn($item) => ['title' => $item->getTitle()])->toArray();
+        return collect($q->getQuery()->getResult())->map(fn($item) => ['title' => $item->getTitle(), 'slug' => $item->getSlug()])->toArray();
     }
 
     /**
@@ -52,7 +52,17 @@ class PasteRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
-        return collect($q->getQuery()->getResult())->map(fn($item) => ['title' => $item->getTitle()])->toArray();
+        return collect($q->getQuery()->getResult())->map(fn($item) => ['title' => $item->getTitle(), 'slug' => $item->getSlug()])->toArray();
+    }
+
+    public function findOneSlug(string $slug): ?Paste
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.slug = :val')
+            ->setParameter('val', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     //    /**
@@ -67,16 +77,6 @@ class PasteRepository extends ServiceEntityRepository
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Paste
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
     //        ;
     //    }
 }

@@ -56,4 +56,30 @@ class PasteController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    #[Route('/paste/{slug}', name: 'show_paste', methods: ['GET'])]
+    public function show(EntityManagerInterface $entityManager, string $slug): Response
+    {
+        $user = $this->getUser();
+        $rep = $entityManager->getRepository(Paste::class);
+
+        if ($slug) {
+            $paste = $rep->findBySlug($slug)[0];
+        } else {
+            $paste = new Paste();
+        }
+        $form = $this->createForm(PasteType::class, $paste, ['action' => $this->generateUrl('app_create_paste')]);
+
+        $list = $rep->pagination(0, 10);
+        if ($user) {
+            $listPrivate = $rep->paginationPrivate(0, 10, $user);
+        }
+
+        return $this->render('paste/show.html.twig', [
+            'form' => $form,
+            'list' => $list,
+            'login' => $user ? true : false,
+            'list_private' => $listPrivate ?? false
+        ]);
+    }
 }
